@@ -1,1 +1,2 @@
-# traveling_salesman_java
+# Traveling Salesman
+Implementação do problema do caixeiro viajante em Java.
