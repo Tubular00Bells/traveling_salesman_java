@@ -1,5 +1,18 @@
-Algoritmo Guloso: 
+Força Bruta:
  -- Cidades visitadas: 4
- -- Tempo total: 1ms
+ -- Tempo total: 19 ms
  -- Ordem das cidades visitadas: [1, 2, 4, 3, 1]
  -- Caminho mais curto encontrado: 4.24
+
+Programação Dinâmica:
+ -- Cidades visitadas: 4
+ -- Tempo total: 1 ms
+ -- Ordem das cidades visitadas: [1, 2, 4, 3, 1]
+ -- Caminho mais curto encontrado: 4.24
+
+Algoritmo Guloso:
+ -- Cidades visitadas: 4
+ -- Tempo total: 1 ms
+ -- Ordem das cidades visitadas: [1, 2, 4, 3, 1]
+ -- Caminho mais curto encontrado: 4.24
+

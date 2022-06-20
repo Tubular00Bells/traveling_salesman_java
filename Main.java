@@ -1,3 +1,4 @@
+// Bibliotecas
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.File;
@@ -5,10 +6,7 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.time.format.DateTimeFormatter;
-import java.util.Random;
 import java.util.List;
 import java.util.Map;
 import java.util.AbstractMap;
@@ -45,6 +43,7 @@ public class Main {
     // Programação Dinâmica
     public static List<Integer> pathDP;
     
+    // Execução
     public static void main(String[] args) throws IOException,FileNotFoundException  {
         try {
             permutacao = new ArrayList<int[]>();
@@ -52,8 +51,8 @@ public class Main {
             pathDP = new ArrayList<Integer>();
             
             // Leitura do arquivo de "input"
-            File citiesFile= new File("input.txt");
-            FileReader fr = new FileReader(citiesFile);
+            File arquivoCidade= new File("input.txt");
+            FileReader fr = new FileReader(arquivoCidade);
             BufferedReader br = new BufferedReader(fr);
 
             String line = br.readLine();
@@ -62,10 +61,10 @@ public class Main {
             int id = 1;
             int index = 0;
             while (line != null){
-                String[] coordinates = line.split(" ");
+                String[] coordenadas = line.split(" ");
 
-                Double lat = Double.parseDouble(coordinates[0]);
-                Double lon = Double.parseDouble(coordinates[1]);
+                Double lat = Double.parseDouble(coordenadas[0]);
+                Double lon = Double.parseDouble(coordenadas[1]);
 
                 cidades.add(new Cidade(id, index, lat, lon));
                 line = br.readLine();
@@ -78,11 +77,16 @@ public class Main {
             Map.Entry<int[], Double> caminhoOtimo = new AbstractMap.SimpleEntry<int[], Double>(null, null);
             long startTime,endTime,totalTime;
 
+            // Apagar arquivo de "output" caso exista
+            File output = new File("output.txt");
+            if (output.exists()){
+                output.delete();
+            }
             // Overview
-            System.out.println("˜˜˜˜˜ Cálculos Gerais ˜˜˜˜˜");
+            System.out.println("˜˜˜˜˜ Execução ˜˜˜˜˜\n");
             
             // Impressão da Força Bruta
-            System.out.println("Calculando caminho utilizando Força Bruta:");
+            System.out.println("Calculando caminho utilizando Força Bruta...");
             startTime = System.currentTimeMillis();
             caminhoOtimo = forcaBruta(cidades, gr, permutacao);
             endTime = System.currentTimeMillis();
@@ -90,7 +94,7 @@ public class Main {
             salvarArquivo(caminhoOtimo, totalTime,"Força Bruta");
 
             // Impressão da Programação Dinâmica
-            System.out.println("Calculando caminho utilizando Programação Dinâmica:");
+            System.out.println("Calculando caminho utilizando Programação Dinâmica...");
             startTime = System.currentTimeMillis();
             caminhoOtimo = progDinamica(cidades, gr, pathDP);
             endTime = System.currentTimeMillis();
@@ -98,7 +102,7 @@ public class Main {
             salvarArquivo(caminhoOtimo,totalTime,"Programação Dinâmica");
     
             // Impressão do Algoritmo Guloso
-            System.out.println("Calculando caminho utilizando Algoritmo Guloso:");
+            System.out.println("Calculando caminho utilizando Algoritmo Guloso...");
             startTime = System.currentTimeMillis();
             caminhoOtimo = algoritmoGuloso(cidades, gr); 
             endTime = System.currentTimeMillis();
@@ -124,35 +128,33 @@ public class Main {
                 
         // Escrever resultados no arquivo de "output"
         File output = new File("output.txt");
-        if (output.exists()){
-            output.delete();
-        }
+
         FileWriter fr = new FileWriter(output, true);
         BufferedWriter bw = new BufferedWriter(fr);
-        bw.write(algoritmo+": "+"\n -- Cidades visitadas: "+cidades.size()+"\n -- Tempo total: "+ time +"ms\n -- Ordem das cidades visitadas: ["+otimo+"]\n -- Caminho mais curto encontrado: "+path+"\n");
+        bw.write(algoritmo+":\n "+"-- Cidades visitadas: "+cidades.size()+"\n -- Tempo total: "+ time +" ms\n -- Ordem das cidades visitadas: ["+otimo+"]\n -- Caminho mais curto encontrado: "+path+"\n\n");
         bw.close();
-        System.out.println("-- Completo!");
+        System.out.println("-- Completo!\n");
     }
 
-    // Grafo representado por uma matriz de adjacência
+    // Grafo representado por uma "Matriz de Adjacência"
     public static double[][] grafoMatriz(){
         int vertices = cidades.size();
-        double[][] matrix = new double[vertices][vertices];
+        double[][] matriz = new double[vertices][vertices];
         for (int from = 0; from < vertices; from++){
             for (int to = 0; to < vertices; to++){
                 if (from == to){
-                    matrix[from][to] = 0;
+                    matriz[from][to] = 0;
                 } else {
-                    matrix[from][to] = point_distance(cidades.get(from).getXPos(),cidades.get(from).getYPos(),cidades.get(to).getXPos(),cidades.get(to).getYPos());
+                    matriz[from][to] = pontoDistancia(cidades.get(from).getXPos(),cidades.get(from).getYPos(),cidades.get(to).getXPos(),cidades.get(to).getYPos());
                 }
             }
         }
-        return matrix;
+        return matriz;
     }
 
     // MÉTODO 1: Força Bruta
     public static Map.Entry<int[], Double> forcaBruta(List<Cidade> cidades, double[][] gr, List<int[]> permutacao){
-        int[] shortestPathPermutation = new int[cidades.size()];
+        int[] shortestCaminhoPermutacao = new int[cidades.size()];
         double caminhoOtimo = Double.MAX_VALUE;
         
         List<Integer> indexOfCitiesToPermute = new ArrayList<Integer>();
@@ -161,13 +163,13 @@ public class Main {
         permutacao(indexOfCitiesToPermute,0, permutacao);
         
         for (int i = 0; i < permutacao.size(); i++){
-            double distanceOfPermutation = permutacao_distancia(permutacao.get(i), gr);
-            if (distanceOfPermutation < caminhoOtimo){
-                caminhoOtimo = distanceOfPermutation;
-                shortestPathPermutation = permutacao.get(i);
+            double distanciaPermutacao = permutacao_distancia(permutacao.get(i), gr);
+            if (distanciaPermutacao < caminhoOtimo){
+                caminhoOtimo = distanciaPermutacao;
+                shortestCaminhoPermutacao = permutacao.get(i);
             }
         }
-        return new AbstractMap.SimpleEntry<int[], Double>(shortestPathPermutation, caminhoOtimo);
+        return new AbstractMap.SimpleEntry<int[], Double>(shortestCaminhoPermutacao, caminhoOtimo);
     }
 
     // MÉTODO 2: Programacao Dinâmica
@@ -190,7 +192,7 @@ public class Main {
 		}
 
         pathDP.add(0);
-        Double pathValue = Heuristic(0, sizePow - 2, gr, graphDP, graphPath, size, sizePow);
+        Double pathValue = Heuristica(0, sizePow - 2, gr, graphDP, graphPath, size, sizePow);
         GetPathByValue(0, sizePow - 2, graphPath, pathValue, sizePow, pathDP);
         int[] caminhoOtimo = pathDP.stream().mapToInt(Integer::intValue).toArray(); 
         
@@ -202,38 +204,40 @@ public class Main {
         List<Integer> path = new ArrayList<>();
         int size = cidades.size();
         
-		double totalDistance = 0;
-		int currentCity = 0;
-		path.add(currentCity);
-		int nearestCity = currentCity;
-		double minimumDistance = Double.MAX_VALUE;
+		double distanciaTotal = 0;
+		int cidadeAtual = 0;
+		path.add(cidadeAtual);
+		int cidadeProxima = cidadeAtual;
+		double distanciaMinima = Double.MAX_VALUE;
 
 		while(path.size() < size) {
             for(int i = 0; i < size; i++) {
-				if(i != currentCity && !path.contains(i)) {
-					if(gr[currentCity][i] < minimumDistance) {
-						minimumDistance = gr[currentCity][i];
-						nearestCity = i;
+				if(i != cidadeAtual && !path.contains(i)) {
+					if(gr[cidadeAtual][i] < distanciaMinima) {
+						distanciaMinima = gr[cidadeAtual][i];
+						cidadeProxima = i;
 					}
 				}
 			}
 
-			path.add(nearestCity);
-			totalDistance += minimumDistance;
-			currentCity = nearestCity;
-			minimumDistance = Double.MAX_VALUE;
+			path.add(cidadeProxima);
+			distanciaTotal += distanciaMinima;
+			cidadeAtual = cidadeProxima;
+			distanciaMinima = Double.MAX_VALUE;
 		}
 
-		totalDistance += gr[path.get(path.size() - 1)][0];
+		distanciaTotal += gr[path.get(path.size() - 1)][0];
         int[] caminhoOtimo = path.stream().mapToInt(Integer::intValue).toArray(); 
 
-        return new AbstractMap.SimpleEntry<int[], Double>(caminhoOtimo, totalDistance);
+        return new AbstractMap.SimpleEntry<int[], Double>(caminhoOtimo, distanciaTotal);
     }
 
-    public static double point_distance(double x1, double y1, double x2, double y2){
+    // Ponto de Distância
+    public static double pontoDistancia(double x1, double y1, double x2, double y2){
         return Math.sqrt((Math.pow((x1 - x2), 2)) + (Math.pow((y1 - y2), 2)));
     }
 
+    // Permutação
     public static void permutacao(List<Integer> ids, int k, List<int[]> permutacao){
         for(int i = k; i < ids.size(); i++){
             Collections.swap(ids, i, k);
@@ -244,6 +248,7 @@ public class Main {
         if (k == ids.size() -1 && ids.get(0) == 0) permutacao.add(ids.stream().mapToInt(i->i).toArray());
     }
 
+    // Obter o caminho por valor
     public static void GetPathByValue(int startTime, int set, int[][] graphPath, double pathValue, int sizePow, List<Integer> pathDP){
         if(graphPath[startTime][set] == -1)
 			return;
@@ -255,7 +260,8 @@ public class Main {
 		GetPathByValue(x, marcado, graphPath, pathValue, sizePow, pathDP);
     }
 
-    public static Double Heuristic(int init, int set, double[][] gr, double[][] graphDP, int[][] graphPath, int size, int sizePow){
+    // Cálculo da "Heurística"
+    public static Double Heuristica(int init, int set, double[][] gr, double[][] graphDP, int[][] graphPath, int size, int sizePow){
         int mascara, marcado;
         double resultado = -1, temp;
 		
@@ -266,7 +272,7 @@ public class Main {
                 mascara = sizePow - 1 - (int) Math.pow(2, i);
                 marcado = set & mascara;
                 if(marcado != set) {
-                    temp = (gr[init][i] + Heuristic(i, marcado, gr, graphDP, graphPath, size, sizePow));
+                    temp = (gr[init][i] + Heuristica(i, marcado, gr, graphDP, graphPath, size, sizePow));
                     if(resultado == -1 || resultado > temp) {
                         resultado = temp;
                         graphPath[init][set] = i;
@@ -278,22 +284,23 @@ public class Main {
         }
     }
 
+    // Permutação da distância
     public static double permutacao_distancia(int[] permutation, double[][] gr){
-        int startCity = permutation[0];
+        int cidadeInicial = permutation[0];
 
-        double distance = 0;
+        double distancia = 0;
 
         int fromID, toID;
         for (int i = 0; i < permutation.length; i++){
             fromID = permutation[i];
 
             if (i == permutation.length - 1){
-                toID = startCity;
+                toID = cidadeInicial;
             } else {
                 toID = permutation[i + 1];
             }
-            distance += gr[fromID][toID];
+            distancia += gr[fromID][toID];
         }
-        return distance;
+        return distancia;
     }
 }
