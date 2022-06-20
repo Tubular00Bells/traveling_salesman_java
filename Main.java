@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.AbstractMap;
 import java.util.Collections;
 
-// Classe para representar uma cidade
+// Classe para representar uma Cidade
 class Cidade {
     private int id;
     private int index;
@@ -35,22 +35,23 @@ class Cidade {
     }
 }
 
+// Main
 public class Main {
     public static ArrayList<Cidade> cidades;
     public static double[][] gr;
 
-    /* Brute Force */
-    public static List<int[]> permutations;
-    /* Dynamic Programming */
+    // Força Bruta
+    public static List<int[]> permutacao;
+    // Programação Dinâmica
     public static List<Integer> pathDP;
     
     public static void main(String[] args) throws IOException,FileNotFoundException  {
         try {
-            permutations = new ArrayList<int[]>();
+            permutacao = new ArrayList<int[]>();
             cidades = new ArrayList<Cidade>();
             pathDP = new ArrayList<Integer>();
             
-            // Leitura do arquivo de input
+            // Leitura do arquivo de "input"
             File citiesFile= new File("input.txt");
             FileReader fr = new FileReader(citiesFile);
             BufferedReader br = new BufferedReader(fr);
@@ -76,27 +77,33 @@ public class Main {
             gr = grafoMatriz();
             Map.Entry<int[], Double> caminhoOtimo = new AbstractMap.SimpleEntry<int[], Double>(null, null);
             long startTime,endTime,totalTime;
-    
-            System.out.println("Calculando caminho utilizando força bruta");
+
+            // Overview
+            System.out.println("˜˜˜˜˜ Cálculos Gerais ˜˜˜˜˜");
+            
+            // Impressão da Força Bruta
+            System.out.println("Calculando caminho utilizando Força Bruta:");
             startTime = System.currentTimeMillis();
-            caminhoOtimo = forcaBruta(cidades, gr, permutations);
+            caminhoOtimo = forcaBruta(cidades, gr, permutacao);
             endTime = System.currentTimeMillis();
             totalTime = endTime-startTime;
-            salvarArquivo(caminhoOtimo, totalTime,"Força bruta");
-    
-            System.out.println("Calculando caminho utilizando programação dinâmica.");
+            salvarArquivo(caminhoOtimo, totalTime,"Força Bruta");
+
+            // Impressão da Programação Dinâmica
+            System.out.println("Calculando caminho utilizando Programação Dinâmica:");
             startTime = System.currentTimeMillis();
             caminhoOtimo = progDinamica(cidades, gr, pathDP);
             endTime = System.currentTimeMillis();
             totalTime = endTime-startTime;
-            salvarArquivo(caminhoOtimo,totalTime,"Programação dinâmica");
+            salvarArquivo(caminhoOtimo,totalTime,"Programação Dinâmica");
     
-            System.out.println("Calculando caminho utilizando algoritmo guloso.");
+            // Impressão do Algoritmo Guloso
+            System.out.println("Calculando caminho utilizando Algoritmo Guloso:");
             startTime = System.currentTimeMillis();
             caminhoOtimo = algoritmoGuloso(cidades, gr); 
             endTime = System.currentTimeMillis();
             totalTime = endTime-startTime;
-            salvarArquivo(caminhoOtimo,totalTime,"Algoritmo guloso");
+            salvarArquivo(caminhoOtimo,totalTime,"Algoritmo Guloso");
             
         } catch (Exception e) {
             System.out.println("Erro: "+e.getMessage()+"\n");
@@ -104,6 +111,7 @@ public class Main {
         return;
     }
 
+    // Arquivo - Salvar
     public static void salvarArquivo(Map.Entry<int[], Double> shortest, long time, String algoritmo) throws IOException {
         String otimo = "";
         String path = shortest.getValue().toString();
@@ -114,7 +122,7 @@ public class Main {
         }
         otimo += cidades.get(shortest.getKey()[0]).getId();
                 
-        // Escrever resultados no arquivo de output
+        // Escrever resultados no arquivo de "output"
         File output = new File("output.txt");
         if (output.exists()){
             output.delete();
@@ -126,7 +134,7 @@ public class Main {
         System.out.println("-- Completo!");
     }
 
-    // Grafo representado por uma matriz de adjacencia
+    // Grafo representado por uma matriz de adjacência
     public static double[][] grafoMatriz(){
         int vertices = cidades.size();
         double[][] matrix = new double[vertices][vertices];
@@ -143,20 +151,20 @@ public class Main {
     }
 
     // MÉTODO 1: Força Bruta
-    public static Map.Entry<int[], Double> forcaBruta(List<Cidade> cidades, double[][] gr, List<int[]> permutations){
+    public static Map.Entry<int[], Double> forcaBruta(List<Cidade> cidades, double[][] gr, List<int[]> permutacao){
         int[] shortestPathPermutation = new int[cidades.size()];
         double caminhoOtimo = Double.MAX_VALUE;
         
         List<Integer> indexOfCitiesToPermute = new ArrayList<Integer>();
         cidades.forEach(city -> indexOfCitiesToPermute.add(city.getIndex()));
         
-        permutacao(indexOfCitiesToPermute,0, permutations);
+        permutacao(indexOfCitiesToPermute,0, permutacao);
         
-        for (int i = 0; i < permutations.size(); i++){
-            double distanceOfPermutation = permutacao_distancia(permutations.get(i), gr);
+        for (int i = 0; i < permutacao.size(); i++){
+            double distanceOfPermutation = permutacao_distancia(permutacao.get(i), gr);
             if (distanceOfPermutation < caminhoOtimo){
                 caminhoOtimo = distanceOfPermutation;
-                shortestPathPermutation = permutations.get(i);
+                shortestPathPermutation = permutacao.get(i);
             }
         }
         return new AbstractMap.SimpleEntry<int[], Double>(shortestPathPermutation, caminhoOtimo);
@@ -226,14 +234,14 @@ public class Main {
         return Math.sqrt((Math.pow((x1 - x2), 2)) + (Math.pow((y1 - y2), 2)));
     }
 
-    public static void permutacao(List<Integer> ids, int k, List<int[]> permutations){
+    public static void permutacao(List<Integer> ids, int k, List<int[]> permutacao){
         for(int i = k; i < ids.size(); i++){
             Collections.swap(ids, i, k);
-            permutacao(ids, k+1, permutations);
+            permutacao(ids, k+1, permutacao);
             Collections.swap(ids, k, i);
         }
 
-        if (k == ids.size() -1 && ids.get(0) == 0) permutations.add(ids.stream().mapToInt(i->i).toArray());
+        if (k == ids.size() -1 && ids.get(0) == 0) permutacao.add(ids.stream().mapToInt(i->i).toArray());
     }
 
     public static void GetPathByValue(int startTime, int set, int[][] graphPath, double pathValue, int sizePow, List<Integer> pathDP){

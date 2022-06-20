@@ -8,13 +8,13 @@ Documentação disponível no Overleaf: https://www.overleaf.com/project/62a1179
 
 Para executar a aplicação, você precisará de uma IDE à sua escolha + Java.
 
-Você também precisará criar um arquivo "cidade.txt" na pasta "/files" com as coordenadas das cidades que você gostaria de calcular.
+Você também precisará criar um arquivo "input.txt" na pasta principal com as coordenadas das cidades que você gostaria de calcular.
 
 Se você não quiser escrever qualquer número, você precisará configurar a variável "runTest" para "true" e configurar um número de cidades na variável "numeroDeCidades".
 
-The results will be placed also in the folder /files, in a text file called statistics.txt.
+Os resultados também serão colocados na pasta principal, em um arquivo de texto chamado "output.txt".
 
-If the program returns any error, the error will be written in the file error.txt.
+Se o programa retornar algum erro, o erro será escrito no arquivo "erro.txt".
 
 
 ## Integrantes 
